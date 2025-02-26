@@ -1,0 +1,12 @@
+title: Введение в CMake
+author: Владимир Лазарев
+logo: logo.png
+
+repository:
+  url: https://github.com/wolodyx/cmake-intro
+  path_to_book: docs
+  branch: master
+
+html:
+  use_issues_button: true
+  use_repository_button: true
