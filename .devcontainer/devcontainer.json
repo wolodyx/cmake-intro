@@ -1,0 +1,8 @@
+{
+    "name": "cmake-intro",
+  
+    "build": {
+        "dockerfile": "./Dockerfile"
+    }
+}
+
