@@ -1,0 +1,792 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>🔥 GCC из командной строки &#8212; Введение в CMake</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'src/gcc';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Настройка рабочего окружения" href="setup.html" />
+    <link rel="prev" title="Сборка программы" href="build.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Введение в CMake - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Введение в CMake - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Введение
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="build.html">Сборка программы</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">🔥 GCC из командной строки</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Настройка рабочего окружения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="github.html">Подготовка GitHub-хранилища</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Тестирование программы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extdeps.html">Подключение внешних зависимостей</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Подготовка инсталлятора</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ci.html">Непрерывное тестирование</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/wolodyx/cmake-intro" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/wolodyx/cmake-intro/issues/new?title=Issue%20on%20page%20%2Fsrc/gcc.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/src/gcc.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>🔥 GCC из командной строки</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Компоненты программы</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Пример простой программы</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Сборка исполняемого файла</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Сборка разделяемой библиотеки</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Сборка статической библиотеки</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Вопросы для самоконтроля</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Упражнения</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="gcc">
+<h1>🔥 GCC из командной строки<a class="headerlink" href="#gcc" title="Link to this heading">#</a></h1>
+<!-- Что мы узнаем из этого раздела? -->
+<p>В этом разделе на простом примере мы увидим как собрать программу, используя компилятор <code class="docutils literal notranslate"><span class="pre">gcc</span></code> и командную строку.
+В будущем эти знания понадобятся вам при исправлении таких ошибок компоновщика (линкера) как “undefined reference to …”.
+Они не так многочисленны как ошибки компилятора, но время на их исправление уходит достаточно много.
+Чтобы исправить их необходимо выйти за пределы языка программирования и переместиться на уровень сборки.</p>
+<p>Здесь мы:</p>
+<ul class="simple">
+<li><p>познакомимся с утилитами <code class="docutils literal notranslate"><span class="pre">gcc</span></code>, <code class="docutils literal notranslate"><span class="pre">nm</span></code>, <code class="docutils literal notranslate"><span class="pre">ar</span></code>;</p></li>
+<li><p>научимся собирать из командной строки запускаемый файл, статическую и разделяемую библиотеки;</p></li>
+<li><p>объединим компоненты программы в одно запускаемое приложение;</p></li>
+</ul>
+<!--
+## Как работает компилятор
+
+`gcc` -- это не компилятор, а управляющая оболочка.
+В зависимости от переданных опций, она вызывает внутри себя компилятор, компоновщик, препроцессор, ассемблер, оптимизатор.
+Сборка программ C/C++ состоит из нескольких этапов:
+* препроцессинг;
+* компиляция;
+* ассемблирование;
+* компоновка;
+* оптимизация;
+* генерация машинного кода.
+
+`gcc` с помощью опций позволяет управлять этими этапами.
+-->
+<section id="id1">
+<h2>Компоненты программы<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>Готовое к запуску приложение состоит из исполняемых файлов.
+Команда <code class="docutils literal notranslate"><span class="pre">ls</span></code> обычно подкрашивает такие файлы зеленым цветом.
+Исполняемые файлы делятся на два типа:</p>
+<ul class="simple">
+<li><p>запускаемые файлы;</p></li>
+<li><p>разделяемые библиотеки.</p></li>
+</ul>
+<p>Запускаемый файл может быть запущены на исполнение, например, из командной строки.
+Обычно, имя такого файла не содержит расширения.
+Разделяемым библиотекам дают расширение <code class="docutils literal notranslate"><span class="pre">.so</span></code>.
+В отличие от запускаемых файлов, разделяемая библиотека имеет несколько точек входа и предоставляют повторно используемую функциональность для нескольких запускаемых файлов.
+Примерами таких библиотек являются:</p>
+<ul class="simple">
+<li><p>стандартная библиотека Си <code class="docutils literal notranslate"><span class="pre">libc</span></code> (libc(7));</p></li>
+<li><p>системная библиотека <code class="docutils literal notranslate"><span class="pre">linux-vdso</span></code> (vdso(7));</p></li>
+</ul>
+<p>Разделяемые библиотеки предоставляют следующие преимущества при их использовании:</p>
+<ul class="simple">
+<li><p>удобство в обновлении программ;</p></li>
+<li><p>экономное расходование дискового пространства.</p></li>
+</ul>
+<p>При сборке программы файлы с исходными кодами (если быть точнее, то объектные файлы) группируются по трем сущностям:</p>
+<ul class="simple">
+<li><p>запускаемым файлам;</p></li>
+<li><p>разделяемым библиотекам;</p></li>
+<li><p>архивам.</p></li>
+</ul>
+<p>Архив – это специальный файл, группирующий несколькообъектных файлов в один.
+В отличие от разделяемой библиотеки, функции содержимое архивного файла помещается внутрь запускаемых файлов и разделяемых библиотек.
+Поэтому архив актуален только при сборке, и не входит в состав дистрибутива и не используется при запуске приложения.</p>
+</section>
+<section id="id2">
+<h2>Пример простой программы<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<p>Напишем простую программу на языке программирования Си.
+Она выводит сообщение “Hello, my friend!” в стандартный поток вывода.
+Несмотря на то, что ее можно оформить в виде одной функции <code class="docutils literal notranslate"><span class="pre">main</span></code>, она искусственно разделена на три файла: <code class="docutils literal notranslate"><span class="pre">main.c</span></code>, <code class="docutils literal notranslate"><span class="pre">hello.c</span></code>, <code class="docutils literal notranslate"><span class="pre">print.c</span></code>.
+Первый файл содержит основную функцию <code class="docutils literal notranslate"><span class="pre">main</span></code>, которая вызывает две функции:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char*</span> <span class="pre">hello_message()</span></code> возвращает строку приветствия и определена в файле <code class="docutils literal notranslate"><span class="pre">hello.c</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">print(const</span> <span class="pre">char*)</span></code> выводит переданную в аргумент строку и определена в файле <code class="docutils literal notranslate"><span class="pre">print.c</span></code>.</p></li>
+</ol>
+<p>С последними двумя файлами реализаций связаны заголовочные файлы, куда вынесены объявления функций.
+Содержимое файлов показано ниже или можете посмотреть последние версии файлов на GitHub <a class="reference external" href="https://github.com/wolodyx/cmake-intro/blob/main/examples/exercise-1.1">по ссылке</a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">hello</span><span class="o">.</span><span class="n">h</span>
+<span class="c1">#ifndef HELLO_H</span>
+<span class="c1">#define HELLO_H</span>
+<span class="n">const</span> <span class="n">char</span><span class="o">*</span> <span class="n">hello_message</span><span class="p">();</span>
+<span class="c1">#endif // !HELLO_H</span>
+
+<span class="o">//</span> <span class="n">hello</span><span class="o">.</span><span class="n">c</span>
+<span class="c1">#include &quot;hello.h&quot;</span>
+<span class="n">static</span> <span class="n">const</span> <span class="n">char</span><span class="o">*</span> <span class="n">s_hello_message</span> <span class="o">=</span> <span class="s2">&quot;Hello, my friend!&quot;</span><span class="p">;</span>
+<span class="n">const</span> <span class="n">char</span><span class="o">*</span> <span class="n">hello_message</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="n">s_hello_message</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="o">//</span> <span class="nb">print</span><span class="o">.</span><span class="n">h</span>
+<span class="c1">#ifndef PRINT_H</span>
+<span class="c1">#define PRINT_H</span>
+<span class="n">void</span> <span class="nb">print</span><span class="p">(</span><span class="n">const</span> <span class="n">char</span><span class="o">*</span> <span class="n">message</span><span class="p">);</span>
+<span class="c1">#endif // !PRINT_H</span>
+
+<span class="o">//</span> <span class="nb">print</span><span class="o">.</span><span class="n">c</span>
+<span class="c1">#include &quot;print.h&quot;</span>
+<span class="c1">#include &lt;stdio.h&gt;</span>
+<span class="n">void</span> <span class="nb">print</span><span class="p">(</span><span class="n">const</span> <span class="n">char</span><span class="o">*</span> <span class="n">message</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">fprintf</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="o">//</span> <span class="n">main</span><span class="o">.</span><span class="n">c</span>
+<span class="c1">#include &quot;hello.h&quot;</span>
+<span class="c1">#include &quot;print.h&quot;</span>
+<span class="nb">int</span> <span class="n">main</span><span class="p">(</span><span class="nb">int</span> <span class="n">argc</span><span class="p">,</span> <span class="n">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">hello_message</span><span class="p">());</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Расширение <code class="docutils literal notranslate"><span class="pre">.c</span></code> файла указывает, что в нем содержится исходный код, написанный на Си.
+Если вы пишете программу на C++, то следует выбрать расширения <code class="docutils literal notranslate"><span class="pre">.cpp</span></code> или <code class="docutils literal notranslate"><span class="pre">.cxx</span></code>.</p>
+</div>
+</section>
+<section id="id3">
+<h2>Сборка исполняемого файла<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<p>Соберите исполняемый файл с именем <code class="docutils literal notranslate"><span class="pre">executable</span></code> одной командой:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gcc</span> <span class="o">-</span><span class="n">o</span> <span class="n">executable</span> <span class="n">main</span><span class="o">.</span><span class="n">c</span> <span class="n">hello</span><span class="o">.</span><span class="n">c</span> <span class="nb">print</span><span class="o">.</span><span class="n">c</span>
+</pre></div>
+</div>
+<p>Опция <code class="docutils literal notranslate"><span class="pre">-o</span></code> требует аргумента – имени выходного файла.
+Если ее не указать, то выходной файл будет иметь тривиальное название <code class="docutils literal notranslate"><span class="pre">a.out</span></code>.
+Далее следуют список файлов с исходными кодами программы.
+Команду выше можно сократить, если воспользоваться подстановкой файлов в <code class="docutils literal notranslate"><span class="pre">bash</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gcc</span> <span class="o">-</span><span class="n">o</span> <span class="n">executable</span> <span class="o">*.</span><span class="n">c</span>
+</pre></div>
+</div>
+<p>На выходе появляется файл <code class="docutils literal notranslate"><span class="pre">executable</span></code>, которую можно запустить по относительному пути:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>bob@pc:~$./executable
+Hello, my friend!
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Файл запускается по имени, только если он располагается в каталогах, перечисленных в системной переменной <code class="docutils literal notranslate"><span class="pre">PATH</span></code>.
+В остальных случаях следует указывать путь к файлу, использую знаки косой черты.
+Самый короткий способ – это воспользоваться обозначением текущего каталога: <code class="docutils literal notranslate"><span class="pre">./executable</span></code>.</p>
+</div>
+<p>Утилита <code class="docutils literal notranslate"><span class="pre">gcc</span></code> – это управляющая программа, вызывающая внутри себя сначала компилятор, затем компоновщик.
+Компилятор для каждого файла с исходным кодом создает объектный файл, а компоновщик собирает объектные файлы в исполняемый файл.
+Все это происходит в оперативной памяти и из артефактов сборки остается только конечный результат – запускаемый файл.</p>
+<figure class="align-default">
+<img alt="../_images/executable.png" src="../_images/executable.png" />
+</figure>
+</section>
+<section id="id4">
+<h2>Сборка разделяемой библиотеки<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<p>В этой части оформим нашу программу в виде двух исполняемых файлов: запускаемого (<code class="docutils literal notranslate"><span class="pre">executable</span></code>) и разделяемой библиотеки (<code class="docutils literal notranslate"><span class="pre">libprint_hello.so</span></code>).
+Код из файла <code class="docutils literal notranslate"><span class="pre">main.c</span></code> попадает в запускаемый файл, а <code class="docutils literal notranslate"><span class="pre">hello.c</span></code> и <code class="docutils literal notranslate"><span class="pre">print.c</span></code> войдут в состав разделяемой библиотеки.</p>
+<figure class="align-default">
+<img alt="../_images/exe-so.png" src="../_images/exe-so.png" />
+</figure>
+<p>Нужная нам конфигурация программы будет получена тремя командами.
+Четвертая команда запустит программу на исполнение.
+Разберем каждую из этих команд.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gcc<span class="w"> </span>-c<span class="w"> </span>-fPIC<span class="w"> </span>hello.c<span class="w"> </span>print.c
+gcc<span class="w"> </span>-shared<span class="w"> </span>-o<span class="w"> </span>libhello_print.so<span class="w"> </span>*.o
+gcc<span class="w"> </span>-o<span class="w"> </span>executable<span class="w"> </span>main.c<span class="w"> </span>-L<span class="nv">$PWD</span><span class="w"> </span>-lhello_print
+<span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="nv">$PWD</span><span class="w"> </span>./executable
+</pre></div>
+</div>
+<p>Команда <code class="docutils literal notranslate"><span class="pre">gcc</span> <span class="pre">-c</span> <span class="pre">-fPIC</span> <span class="pre">hello.c</span> <span class="pre">print.c</span></code> скомпилирует файлы <code class="docutils literal notranslate"><span class="pre">hello.c</span></code> и <code class="docutils literal notranslate"><span class="pre">print.c</span></code> в объектные файлы <code class="docutils literal notranslate"><span class="pre">hello.o</span></code> и <code class="docutils literal notranslate"><span class="pre">print.o</span></code>.
+Опция <code class="docutils literal notranslate"><span class="pre">-c</span></code> указыает на компиляцию.
+Вторая опция <code class="docutils literal notranslate"><span class="pre">-fPIC</span></code> указывает компилятору создавать переносимый в адресном пространстве код (Position Independent Code).
+Эта опция нужна для возможности в последующем собрать из объектных файлов разделяемую библиотеку.</p>
+<p>Команда <code class="docutils literal notranslate"><span class="pre">gcc</span> <span class="pre">-shared</span> <span class="pre">-o</span> <span class="pre">libhello_print.so</span> <span class="pre">*.o</span></code> собирает из файлов с расширением <code class="docutils literal notranslate"><span class="pre">.o</span></code> разделяемую библиотеку с именем <code class="docutils literal notranslate"><span class="pre">libhello_print.so</span></code>.
+Опция <code class="docutils literal notranslate"><span class="pre">-shared</span></code> указывает <code class="docutils literal notranslate"><span class="pre">gcc</span></code>, что выходной файл следует оформить в виде разделяемой библиотеки.</p>
+<p>Третьей командой <code class="docutils literal notranslate"><span class="pre">gcc</span> <span class="pre">-o</span> <span class="pre">executable</span> <span class="pre">main.c</span> <span class="pre">-L$PWD</span> <span class="pre">-lhello_print</span></code> мы собираем запускаемый файл <code class="docutils literal notranslate"><span class="pre">executable</span></code>.
+Для его сборки дополнительно указываем два аргумента опциями <code class="docutils literal notranslate"><span class="pre">-L</span></code> и <code class="docutils literal notranslate"><span class="pre">-l</span></code>.
+Опция <code class="docutils literal notranslate"><span class="pre">-l</span></code> задает имя библиотеки, а <code class="docutils literal notranslate"><span class="pre">-L</span></code> – путь к ней.
+Путь следует задавать обязательно, если библиотека пользовательская.
+Для системных библиотек путь необязателен.</p>
+<!-- Про именование разделяемых библиотек -->
+<p>Заметим, что имя библиотеки в командной строке и в файловой системе различаются.
+По соглашению, файл с библиотекой <code class="docutils literal notranslate"><span class="pre">xyz</span></code> будет иметь название <code class="docutils literal notranslate"><span class="pre">libxyz.so</span></code>.
+Название также может быть дополнено версией, как например, <code class="docutils literal notranslate"><span class="pre">libxyz.so.3.2.1</span></code>.
+Более подробно о правилах именования библиотек и их организации в файловой системе в Linux можно ознакомиться <a class="reference external" href="https://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html">по ссылке</a>.</p>
+<!-- Про запуск приложения с собственной несистемной разделяемой библиотекой -->
+<p>Обратим внимание, что теперь не получается запустить нашу программу как раньше по относительному имени:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">bob@pc:~$ </span>./executable
+<span class="go">./executable: error while loading shared libraries: libhello_print.so: cannot open shared object file: No such file or directory</span>
+</pre></div>
+</div>
+<p>Поэтому перед запуском файла мы инициализируем переменную окружения <code class="docutils literal notranslate"><span class="pre">LD_LIBRARY_PATH</span></code> каталогом, где располагается наша разделяемая библиотека.
+Зачем это нужно?
+При запуске программы в дело вступает динамический компоновщик.
+Это компонент операционной системы.
+Его задача в том, чтобы собрать разбросанные на диске исполняемые файлы в одно целое в оперативной памяти.
+По умолчанию он ищет разделяемые библиотеки в системных каталогах.
+Если задана переменная окружения <code class="docutils literal notranslate"><span class="pre">LD_LIBRARY_PATH</span></code>, то он дополнительно ищет библиотеки в ее каталогах.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Заметим, что при сборке программы тоже есть компоновщик.
+Чтобы как-то различать их, им дают названия <em>статический и динамический компоновщики</em>.</p>
+</div>
+</section>
+<section id="id5">
+<h2>Сборка статической библиотеки<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
+<p>Альтернативой разделяемой библиотеке выступает <em>архив</em>, больше известная как <em>статическая библиотека</em> из программирования на Windows.
+Архив, как и разделяемая библиотека, содержит набор функций вместе с объектными файлами.
+В отличие от разделяемой библиотеки, архив не является исполняемым файлом.
+Функции из архива включаются в исполняемые файлы при сборке программы статическим компоновщиком.
+Поэтому архив актуален только на момент сборки и не может входить в состав дистрибутива.
+Архив полезен тем, что ускоряет сборку и уменьшет фрагментацию диска из-за большого количества малых файлов.</p>
+<p>Для управления архивом используют утилиту <code class="docutils literal notranslate"><span class="pre">ar</span></code>.
+Эта утилита появилась на заре становления программирования, поэтому использует непривычные обозначения коротких опции без знака дефиса.
+В реализации от GNU эти опции доступны и через дефис.</p>
+<figure class="align-default">
+<img alt="../_images/exe-a.png" src="../_images/exe-a.png" />
+</figure>
+<p>Чтобы собрать программу и запустить ее выполним последовательно четыре команды:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gcc<span class="w"> </span>-c<span class="w"> </span>hello.c<span class="w"> </span>print.c
+ar<span class="w"> </span>rcs<span class="w"> </span>libprint_hello.a<span class="w"> </span>print.o<span class="w"> </span>hello.o
+gcc<span class="w"> </span>-L<span class="nv">$PWD</span><span class="w"> </span>-o<span class="w"> </span>executable<span class="w"> </span>main.c<span class="w"> </span>-lprint_hello
+./executable
+</pre></div>
+</div>
+<p>Первая команда подготавливает два объектных файла, из которых уже вторая команда соберет архив.
+Рассмотрим три опции:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">c</span></code> подавляет информационный вывод о создании нового архива;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">r</span></code> указыает, что необходимо добавить в архив содержимое указанных объектных файлов;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">s</span></code> указывает, что необходимо перестроить таблицу внешних символов.</p></li>
+</ul>
+<p>Третья команда, по аналогии выше, собирает запускаемый файл из файла <code class="docutils literal notranslate"><span class="pre">main.c</span></code>, компонуя его с архивом.</p>
+<p>Запуск <code class="docutils literal notranslate"><span class="pre">executable</span></code> не требует указания расположения архива.
+Удалите файл <code class="docutils literal notranslate"><span class="pre">libprint_hello.a</span></code> и запустите файл снова, чтобы удостоверится, что программа не требует для своего запуска этого файла.</p>
+</section>
+<section id="id6">
+<h2>Вопросы для самоконтроля<a class="headerlink" href="#id6" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Что означают опции <code class="docutils literal notranslate"><span class="pre">-c</span></code>, <code class="docutils literal notranslate"><span class="pre">-o</span></code>, <code class="docutils literal notranslate"><span class="pre">-shared</span></code>, <code class="docutils literal notranslate"><span class="pre">-fPIC</span></code> управляющей программы <code class="docutils literal notranslate"><span class="pre">gcc</span></code>?</p></li>
+<li><p>Что означают переменные окружения <code class="docutils literal notranslate"><span class="pre">PWD</span></code>, <code class="docutils literal notranslate"><span class="pre">HOME</span></code>, <code class="docutils literal notranslate"><span class="pre">PATH</span></code>?</p></li>
+<li><p>Что выдаст <code class="docutils literal notranslate"><span class="pre">gcc</span></code>, если ей также передать файл с расширением <code class="docutils literal notranslate"><span class="pre">.h</span></code>?
+А если передать файл, функции в котором не вызываются в программе?</p></li>
+</ol>
+</section>
+<section id="id7">
+<h2>Упражнения<a class="headerlink" href="#id7" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Найдите в системе все разделяемые библиотеки командой <code class="docutils literal notranslate"><span class="pre">find</span></code>. <!-- `find / -name lib*.so 2>/dev/null | less` --></p></li>
+<li><p>Соберите программу из файлов <code class="docutils literal notranslate"><span class="pre">main.c</span></code>, <code class="docutils literal notranslate"><span class="pre">hello.c</span></code>, <code class="docutils literal notranslate"><span class="pre">print.c</span></code> в следующих вариантах:</p></li>
+</ol>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">libhello.so</span> <span class="pre">+</span> <span class="pre">libprint.so</span> <span class="pre">+</span> <span class="pre">executable</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">libhello.so</span> <span class="pre">+</span> <span class="pre">libprint.a</span> <span class="pre">+</span> <span class="pre">executable</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">libhello.a</span> <span class="pre">+</span> <span class="pre">libprint.so</span> <span class="pre">+</span> <span class="pre">executable</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">libhello.a</span> <span class="pre">+</span> <span class="pre">libprint.a</span> <span class="pre">+</span> <span class="pre">executable</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">libhello_print.a</span> <span class="pre">+</span> <span class="pre">executable</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">libhello_print.so</span> <span class="pre">+</span> <span class="pre">executable</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">libhello.so</span> <span class="pre">+</span> <span class="pre">executable</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">libprint.so</span> <span class="pre">+</span> <span class="pre">executable</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">executable</span></code>;</p></li>
+</ul>
+<!--
+Команда `ar -t libprint_hello.a` выводит содержащихся в архиве список объектных файлов.
+-->
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./src"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="build.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Сборка программы</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="setup.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Настройка рабочего окружения</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Компоненты программы</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Пример простой программы</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Сборка исполняемого файла</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Сборка разделяемой библиотеки</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Сборка статической библиотеки</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Вопросы для самоконтроля</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Упражнения</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Владимир Лазарев
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
