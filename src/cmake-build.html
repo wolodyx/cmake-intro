@@ -1,0 +1,753 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>🔥 Сборка программы в CMake &#8212; Введение в CMake</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'src/cmake-build';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Настройка рабочего окружения" href="setup.html" />
+    <link rel="prev" title="🔥 GCC из командной строки" href="gcc.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Введение в CMake - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Введение в CMake - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Введение
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="build.html">Сборка программы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gcc.html">🔥 GCC из командной строки</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">🔥 Сборка программы в CMake</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Настройка рабочего окружения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="github.html">Подготовка GitHub-хранилища</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Тестирование программы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extdeps.html">Подключение внешних зависимостей</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Подготовка инсталлятора</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ci.html">Непрерывное тестирование</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/wolodyx/cmake-intro" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/wolodyx/cmake-intro/issues/new?title=Issue%20on%20page%20%2Fsrc/cmake-build.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/src/cmake-build.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>🔥 Сборка программы в CMake</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Что делает CMake</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Сборка CMake</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#eigen">Сборка Eigen</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Общий алгоритм сборки проектов</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Добываем исходные коды</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Конфигурируем проект</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Собираем проект</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Тестируем и устанавливаем программу</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">Вопросы для самоконтроля</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">Упражнения</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="cmake">
+<h1>🔥 Сборка программы в CMake<a class="headerlink" href="#cmake" title="Link to this heading">#</a></h1>
+<p>В этом разделе мы научимся собирать проекты программ, написанных на C++.
+Поддерживает ли проект сборку посредством CMake можно узнать, если посмотреть в корневой каталог проекта и найти там файл <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code>.</p>
+<p>Здесь мы научимся:</p>
+<ul class="simple">
+<li><p>собирать проекты CMake и Eigen с помощью CMake;</p></li>
+</ul>
+<section id="id1">
+<h2>Что делает CMake<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+</section>
+<section id="id2">
+<h2>Сборка CMake<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<p>Склонируем проект из <a class="reference external" href="https://gitlab.kitware.com/cmake/cmake">GitLab</a> командой</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">gitlab</span><span class="o">.</span><span class="n">kitware</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">cmake</span><span class="o">/</span><span class="n">cmake</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+<p>После чего в текущем каталоге появится каталог <code class="docutils literal notranslate"><span class="pre">CMake</span></code>.
+Перейдем туда.</p>
+<p>Проект CMake может быть установленной версией себя.
+Создадим каталог <code class="docutils literal notranslate"><span class="pre">build</span></code> в корне проекта командой <code class="docutils literal notranslate"><span class="pre">mkdir</span> <span class="pre">build</span></code>.</p>
+<p>Перейдите в созданный каталог и запустите <code class="docutils literal notranslate"><span class="pre">cmake</span> <span class="pre">..</span></code>.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">-- Performing Test HAVE_SOCKADDR_IN6_SIN6_SCOPE_ID</span>
+<span class="go">-- Performing Test HAVE_SOCKADDR_IN6_SIN6_SCOPE_ID - Success</span>
+<span class="go">-- Could NOT find OpenSSL, try to set the path to OpenSSL root folder in the system variable OPENSSL_ROOT_DIR (missing: OPENSSL_CRYPTO_LIBRARY OPENSSL_INCLUDE_DIR) </span>
+<span class="go">CMake Error at Utilities/cmcurl/CMakeLists.txt:943 (message):</span>
+<span class="go">  Could not find OpenSSL.  Install an OpenSSL development package or</span>
+<span class="go">  configure CMake with -DCMAKE_USE_OPENSSL=OFF to build without OpenSSL.</span>
+</pre></div>
+</div>
+<p>В сообщении об ошибке содержится подсказка, как ее исправить.
+Подскажем CMake, что мы хотим собрать проект без OpenSSL, запустив конфигурацию командой</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cmake</span> <span class="o">-</span><span class="n">DCMAKE_USE_OPENSSL</span><span class="o">=</span><span class="n">OFF</span> <span class="o">..</span>
+</pre></div>
+</div>
+<p>В действительности же нам необходимо установить OpenSSL.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>libssl-dev
+</pre></div>
+</div>
+<p>Запустим сборку командой <code class="docutils literal notranslate"><span class="pre">make</span></code>.</p>
+<p>Полный сценарий сборки состоит из четырех команд:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="n">build</span>
+<span class="n">cd</span> <span class="n">build</span>
+<span class="n">cmake</span> <span class="o">-</span><span class="n">DCMAKE_USE_OPENSSL</span><span class="o">=</span><span class="n">OFF</span> <span class="o">..</span>
+<span class="n">make</span>
+</pre></div>
+</div>
+</section>
+<section id="eigen">
+<h2>Сборка Eigen<a class="headerlink" href="#eigen" title="Link to this heading">#</a></h2>
+<p>Проект <a class="reference external" href="https://eigen.tuxfamily.org/index.php?title=Main_Page">Eigen</a> представляет C++-библиотеку для решения задач линейной алгебры.
+Библиотека эффективно манипулирует с векторами и матрицами.</p>
+<p>Чтобы получить исходные коды, скачайте архив <a class="reference external" href="https://gitlab.com/libeigen/eigen/-/archive/3.3.9/eigen-3.3.9.tar.gz">eigen-3.3.9.tar.gz</a> и распакуйте его командами:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="o">--</span><span class="n">output</span> <span class="o">./</span><span class="n">eigen</span><span class="o">-</span><span class="mf">3.3.9</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">gitlab</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">libeigen</span><span class="o">/</span><span class="n">eigen</span><span class="o">/-/</span><span class="n">archive</span><span class="o">/</span><span class="mf">3.3.9</span><span class="o">/</span><span class="n">eigen</span><span class="o">-</span><span class="mf">3.3.9</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+<span class="n">tar</span> <span class="o">-</span><span class="n">xf</span> <span class="n">eigen</span><span class="o">-</span><span class="mf">3.3.9</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+</pre></div>
+</div>
+<p>Затем перейдите в появившийся каталог, создайте подкаталог <code class="docutils literal notranslate"><span class="pre">build</span></code> и запустите оттуда конфигурацию командами</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">eigen</span><span class="o">-</span><span class="mf">3.3.9</span>
+<span class="n">mkdir</span> <span class="n">build</span>
+<span class="n">cd</span> <span class="n">build</span>
+<span class="n">cmake</span> <span class="o">..</span>
+</pre></div>
+</div>
+<p>В терминале появится следующее сообщение:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>-- ************************************************************
+-- 
+-- Configured Eigen 3.3.9
+-- 
+-- Some things you can do now:
+-- --------------+--------------------------------------------------------------
+-- Command       |   Description
+-- --------------+--------------------------------------------------------------
+-- make install  | Install Eigen. Headers will be installed to:
+--               |     &lt;CMAKE_INSTALL_PREFIX&gt;/&lt;INCLUDE_INSTALL_DIR&gt;
+--               |   Using the following values:
+--               |     CMAKE_INSTALL_PREFIX: /usr/local
+--               |     INCLUDE_INSTALL_DIR:  include/eigen3
+--               |   Change the install location of Eigen headers using:
+--               |     cmake . -DCMAKE_INSTALL_PREFIX=yourprefix
+--               |   Or:
+--               |     cmake . -DINCLUDE_INSTALL_DIR=yourdir
+-- make doc      | Generate the API documentation, requires Doxygen &amp; LaTeX
+-- make check    | Build and run the unit-tests. Read this page:
+--               |   http://eigen.tuxfamily.org/index.php?title=Tests
+-- make blas     | Build BLAS library (not the same thing as Eigen)
+-- make uninstall| Removes files installed by make install
+-- --------------+--------------------------------------------------------------
+</pre></div>
+</div>
+<p>Из него можно узнать, что библиотеку можно установить в систему, собрать документацию и запустить модульные тесты.
+Исходные коды библиотеки Eigen размещаются только в заголовочных файлах.
+Такие библиотеки называют “header-only”.
+Они не требуют компиляции и подключаются в другие проекты сразу директивой <code class="docutils literal notranslate"><span class="pre">#include</span></code>.</p>
+<p>Попробуйте запустить установку библиотеки в систему командой <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code>.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">tim@pc:~/eigen-3.3.9/build$ </span>make<span class="w"> </span>install
+<span class="go">Install the project...</span>
+<span class="go">-- Install configuration: &quot;Release&quot;</span>
+<span class="go">CMake Error at cmake_install.cmake:46 (file):</span>
+<span class="go">  file cannot create directory: /usr/local/include/eigen3.  Maybe need</span>
+<span class="go">  administrative privileges.</span>
+
+
+<span class="go">make: *** [Makefile:110: install] Ошибка 1</span>
+</pre></div>
+</div>
+<p>Вы получите сообщение об ошибке.
+На запись в системные каталоги нужны права суперпользователя.
+Но мы не будем запускать эту команду повторно с правами суперпользователя, а настроим установку в домашний каталог.
+Для этого повторим этап конфигурации, но передав туда переменную <code class="docutils literal notranslate"><span class="pre">CMAKE_INSTALL_PREFIX=$HOME</span></code>:</p>
+<p><code class="docutils literal notranslate"><span class="pre">cmake</span> <span class="pre">-DCMAKE_INSTALL_PREFIX=$HOME</span> <span class="pre">..</span></code></p>
+<p>Уже после установка завершится успешно.
+Файлы библиотеки Eigen скопируются в каталоги <code class="docutils literal notranslate"><span class="pre">~/include</span></code> и <code class="docutils literal notranslate"><span class="pre">~/share</span></code>.</p>
+</section>
+<section id="id3">
+<h2>Общий алгоритм сборки проектов<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<p>Общий алгоритм превращения проекта в рабочую программу состоит из пяти действий, первые три из которых обязательны (за исключением “header-only” библиотек):</p>
+<ol class="arabic simple">
+<li><p>добываем исходные коды проекта;</p></li>
+<li><p>конфигурируем проект;</p></li>
+<li><p>собираем проект;</p></li>
+<li><p>тестируем программу;</p></li>
+<li><p>устанавливаем программу.</p></li>
+</ol>
+<section id="id4">
+<h3>Добываем исходные коды<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<!-- Добываем исходные коды -->
+<p>Исходные коды проекта можно получить как минимум двумя способами: склонировать утилитой <code class="docutils literal notranslate"><span class="pre">git</span></code> из Git-хостинга или загрузить в виде архивного файла.
+В этом разделе мы воспользовались обоими способами.
+В результате должен появиться каталог с файлами проекта.
+Все последующие действия будут проходить внутри него или вложенных в него каталогах.</p>
+</section>
+<section id="id5">
+<h3>Конфигурируем проект<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<!-- Что такое конфигурирование проекта? -->
+<p>Что такое конфигурирование проекта?
+Это поиск и фиксация информации из внешнего окружения, которая будет нужна для последующей сборки программы.</p>
+<figure class="align-default">
+<img alt="../_images/dependencies.png" src="../_images/dependencies.png" />
+</figure>
+<p>Одну и ту же программу можно собрать по-разному, в зависимости от состояния внешнего окружения.
+Внешнее окружение – это все то, что не входит в состав каталога с проектом, но влияет на его превращение в программу.
+Сюда входят:</p>
+<ul class="simple">
+<li><p>платформа, т.е. комбинация операционной системы и архитектуры процессора;</p></li>
+<li><p>утилиты компилятора;</p></li>
+<li><p>сторонние библиотеки;</p></li>
+<li><p>система сборки CMake;</p></li>
+<li><p>система контроля версий Git;</p></li>
+<li><p>переменные окружения;</p></li>
+<li><p>дополнительные файлы и каталоги;</p></li>
+<li><p>и что-то еще.</p></li>
+</ul>
+<p>Все эти элементы называются <em>внешними зависимостями</em>.
+Их разделяют на две части: <em>обязательные</em> и <em>дополнительные</em>.
+Без обязательных внешних зависимостей проект не может быть собран в программу.
+Без дополнительных внешних зависимостей собранной программе будет не доставать некоторой функциональности.</p>
+<p>Так, кроссплатформенная программа может быть собрана на разных платформах: Windows, Linux, MacOS.
+Программа может быть собрана разным уровнем функциональности, в зависимости от типа лицензии или доступности внешних зависимостей.</p>
+<p>На этапе конфигурирования CMake анализирует внешнее окружение и инициализирует переменные CMake.
+В этих переменных содержатся пути к внешним зависимостям, которые будут переданы компилятору и использованы с опциями <code class="docutils literal notranslate"><span class="pre">-L</span></code>, <code class="docutils literal notranslate"><span class="pre">-I</span></code> и <code class="docutils literal notranslate"><span class="pre">-l</span></code>.</p>
+<p>Переменные CMake также могут быть переданы компилятору через опцию <code class="docutils literal notranslate"><span class="pre">-D</span></code> в виде переменных препроцессора.
+На основе этих переменных в исходных кодах будет подключен или отключен участок исходного кода.
+Стандартными переменными такого рода являются <code class="docutils literal notranslate"><span class="pre">NDEBUG</span></code>, <code class="docutils literal notranslate"><span class="pre">WIN32</span></code>, <code class="docutils literal notranslate"><span class="pre">LINUX</span></code>.</p>
+<p>Некоторые переменные CMake могут стать константными статическими переменными языка программирования.
+Для этого генерируется заголовочный файл, в котором будут прописаные переменные с предопределенными именами, и значениями, добытыми на этапе конфигурирования.
+Исходный код, где необходимы эти данные, будут подключать этот заголовочный файл и использовать переменную.
+Примером такой переменной может являться версия, имя производителя или дата сборки программного обеспечения.</p>
+</section>
+<section id="id6">
+<h3>Собираем проект<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<p>В результате сборки проекта появятся дополнительные файлы, называемые <em>артефактами сборки</em>.
+Это файлы с такими шаблонными именами как <code class="docutils literal notranslate"><span class="pre">*.so</span></code>, <code class="docutils literal notranslate"><span class="pre">*.a</span></code>, <code class="docutils literal notranslate"><span class="pre">moc_*.cpp</span></code>, <code class="docutils literal notranslate"><span class="pre">*.obj</span></code>; сгенерированные автоматически утилитами <code class="docutils literal notranslate"><span class="pre">flex</span></code>, <code class="docutils literal notranslate"><span class="pre">bison</span></code>, <code class="docutils literal notranslate"><span class="pre">cmake</span></code>.
+Артефакты можно смело удалять, так как они создаются автоматически при каждой сборке.
+Единственное, что надо – хранить их в отдельном каталоге и не смешивать с исходными кодами.
+CMake работает с двумя каталогами:</p>
+<ul class="simple">
+<li><p>каталог исходных кодов (каталог проекта);</p></li>
+<li><p>каталог двоичных файлов (артефактов сборки).</p></li>
+</ul>
+<p>В любой момент вы можете удалить второй каталог и начать все заново.
+Эта особенность выгодно отличает CMake от других систем сборки как например make.</p>
+<p>Создайте каталог двоичных файлов и перейдите в него командами:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="n">build</span>
+<span class="n">cd</span> <span class="n">build</span>
+</pre></div>
+</div>
+<p>Каталог <code class="docutils literal notranslate"><span class="pre">build</span></code> может быть занят.
+Во-первых он может быть частью проекта, тогда подберите другое имя каталогу, например <code class="docutils literal notranslate"><span class="pre">bld</span></code>.
+Во-вторых каталог может быть уже создан и в нем хранятся артефакты сборки, тогда удалите его командой <code class="docutils literal notranslate"><span class="pre">rm</span> <span class="pre">-rf</span> <span class="pre">build</span></code>.</p>
+<p>Как узнать, что каталог создан под сборку CMake проекта?
+Если в каталоге есть файл <code class="docutils literal notranslate"><span class="pre">CMakeCache.txt</span></code>, то это каталог CMake для двоичных файлов.</p>
+<!-- Про генераторы -->
+</section>
+<section id="id7">
+<h3>Тестируем и устанавливаем программу<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+</section>
+</section>
+<section id="id8">
+<h2>Вопросы для самоконтроля<a class="headerlink" href="#id8" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>На что можно повлиять на этапе конфигурации проекта?</p></li>
+</ol>
+</section>
+<section id="id9">
+<h2>Упражнения<a class="headerlink" href="#id9" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>При конфигурации Eigen в терминале просказльзывает сообщение, что UMFPACK не найден.
+Попробуйте собрать библиотеку с зависимостью <a class="reference external" href="https://en.wikipedia.org/wiki/UMFPACK">UMFPACK</a>.</p></li>
+</ol>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./src"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="gcc.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">🔥 GCC из командной строки</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="setup.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Настройка рабочего окружения</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Что делает CMake</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Сборка CMake</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#eigen">Сборка Eigen</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Общий алгоритм сборки проектов</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Добываем исходные коды</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Конфигурируем проект</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Собираем проект</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Тестируем и устанавливаем программу</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">Вопросы для самоконтроля</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">Упражнения</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Владимир Лазарев
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
