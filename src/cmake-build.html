@@ -413,10 +413,30 @@ document.write(`
 Поддерживает ли проект сборку посредством CMake можно узнать, если посмотреть в корневой каталог проекта и найти там файл <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code>.</p>
 <p>Здесь мы научимся:</p>
 <ul class="simple">
+<li><p>узнаем, что делает CMake;</p></li>
 <li><p>собирать проекты CMake и Eigen с помощью CMake;</p></li>
+<li><p>что такое сборка проекта и из каких этапов она состоит;</p></li>
+<li><p>что такое конфигурирование;</p></li>
 </ul>
 <section id="id1">
 <h2>Что делает CMake<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>CMake – это система сборки проекта.
+Она состоит из:</p>
+<ul class="simple">
+<li><p>утилит командой строки <code class="docutils literal notranslate"><span class="pre">cmake</span></code>, <code class="docutils literal notranslate"><span class="pre">ctest</span></code>, <code class="docutils literal notranslate"><span class="pre">cpack</span></code>;</p></li>
+<li><p>приложения <code class="docutils literal notranslate"><span class="pre">cmake-gui</span></code> с графическим интерфейсом;</p></li>
+<li><p>приложения <code class="docutils literal notranslate"><span class="pre">ccmake</span></code> с псевдографическим интерфейсом;</p></li>
+<li><p>языка сценариев;</p></li>
+<li><p>дополнительных модулей.</p></li>
+</ul>
+<p>Все эти элементы служат для одной цели – предоставить удобный инструмент для сборки проекта.
+Сборка проекта – это последовательность процессов превращения исходных кодов в правильно работающую программу.
+В этой череде процессов компиляция – только одна часть сборки.
+Кроме нее туда входят конфигурирование, тестирование и упаковка.</p>
+<p>В технологии программирования уже существуют инструменты, решающие эти задачи.
+В UNIX-системах это make, autotools, а в Windows – “Visual Studio”.
+В отличие от них, CMake предлагает одно решение под все платформы и достигает это меньшими усилиями.</p>
+<p>CMake – это фактический стандарт в разработке программ C++.</p>
 </section>
 <section id="id2">
 <h2>Сборка CMake<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
