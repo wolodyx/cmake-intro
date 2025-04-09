@@ -4,6 +4,8 @@ chapters:
 - file: src/build
 - file: src/gcc
 - file: src/cmake-build
+- file: src/cmake-project
+- file: src/cmake-help
 - file: src/setup
 - file: src/github
 - file: src/testing
