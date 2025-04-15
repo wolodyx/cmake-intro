@@ -408,10 +408,10 @@ document.write(`
 <h1>🔥 GCC из командной строки<a class="headerlink" href="#gcc" title="Link to this heading">#</a></h1>
 <!-- Что мы узнаем из этого раздела? -->
 <p>В этом разделе на простом примере мы увидим как собрать программу, используя утилиту <code class="docutils literal notranslate"><span class="pre">gcc</span></code> и командную строку.
-В будущем эти знания понадобятся вам при исправлении таких ошибок компоновщика (линкера) как “undefined reference to …”.
-Они не так многочисленны как ошибки компилятора, но время на их исправление уходит достаточно много.
+В будущем эти знания понадобятся вам при исправлении таких ошибок компоновщика (линкера) как “<em>undefined reference to …</em>”.
+Они не так многочисленны как ошибки компилятора, но время на выявление их причин уходит достаточно много.
 Чтобы исправить их необходимо выйти за пределы языка программирования и переместиться на уровень сборки.</p>
-<p>Здесь мы научимся:</p>
+<p>В этом разделе мы научимся:</p>
 <ul class="simple">
 <li><p>работать с утилитами <code class="docutils literal notranslate"><span class="pre">gcc</span></code>, <code class="docutils literal notranslate"><span class="pre">nm</span></code>, <code class="docutils literal notranslate"><span class="pre">ar</span></code>;</p></li>
 <li><p>собирать из командной строки запускаемый файл, статическую и разделяемую библиотеки;</p></li>
@@ -434,26 +434,56 @@ document.write(`
 -->
 <section id="id1">
 <h2>Компоненты программы<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
-<p>Готовое к запуску приложение состоит из исполняемых файлов.
+<p>Готовое к запуску приложение состоит из <em>исполняемых файлов</em>.
 Команда <code class="docutils literal notranslate"><span class="pre">ls</span></code> обычно подкрашивает такие файлы зеленым цветом.
 Исполняемые файлы делятся на два типа:</p>
 <ul class="simple">
-<li><p>запускаемые файлы;</p></li>
-<li><p>разделяемые библиотеки.</p></li>
+<li><p><em>запускаемые файлы</em>;</p></li>
+<li><p><em>разделяемые библиотеки</em>.</p></li>
 </ul>
 <p>Запускаемый файл, как говорит название, может быть запущен на исполнение, например, из командной строки.
-В отличие от запускаемых файлов, разделяемая библиотека имеет несколько точек входа и предоставляют повторно используемую функциональность для нескольких запускаемых файлов.
-Разделяемым библиотекам дают расширение <code class="docutils literal notranslate"><span class="pre">.so</span></code> (<code class="docutils literal notranslate"><span class="pre">.dll</span></code> в Windows), а запускаемые файлы обычно обходятся без расширений (или <code class="docutils literal notranslate"><span class="pre">.exe</span></code> в Windows).
-Примерами расширяемых библиотек являются:</p>
-<ul class="simple">
-<li><p>стандартная библиотека Си libc(7) в файле <code class="docutils literal notranslate"><span class="pre">/lib/x86_64-linux-gnu/libc.so.6</span></code>;</p></li>
-<li><p>системная библиотека vdso(7) в файле <code class="docutils literal notranslate"><span class="pre">linux-vdso.so.1</span></code>;</p></li>
-</ul>
+В отличие от запускаемых файлов, разделяемая библиотека имеет несколько точек входа и предоставляют повторно используемую функциональность для других запускаемых файлов.
+Разделяемым библиотекам дают расширение <code class="docutils literal notranslate"><span class="pre">.so</span></code> (<code class="docutils literal notranslate"><span class="pre">.dll</span></code> в Windows), а запускаемые файлы обычно обходятся без расширений (или <code class="docutils literal notranslate"><span class="pre">.exe</span></code> в Windows).</p>
+<p>Воспользуемся командой <code class="docutils literal notranslate"><span class="pre">find</span></code> чтобы найти разделяемые библиотеки в файловой системе.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>find<span class="w"> </span>/<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;lib*.so&quot;</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>less
+</pre></div>
+</div>
+<p>Воспользуемся утилитой <code class="docutils literal notranslate"><span class="pre">tree</span></code> и опциями <code class="docutils literal notranslate"><span class="pre">--from-file</span></code>, <code class="docutils literal notranslate"><span class="pre">-d</span></code>, <code class="docutils literal notranslate"><span class="pre">-L</span></code> и отобразим список каталогов до двух уровней, в которых размещены разделяемые библиотеки.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>├── snap
+│   ├── core18
+│   ├── core22
+│   ├── firefox
+│   ├── firmware-updater
+│   ├── gnome-42-2204
+│   ├── snapd
+│   ├── snap-store
+│   └── vlc
+└── usr
+    ├── lib
+    ├── lib64
+    ├── libexec
+    └── share
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Стандартная библиотека Си <code class="docutils literal notranslate"><span class="pre">libc(7)</span></code> тоже оформлена как разделяемая библиотека с именем <code class="docutils literal notranslate"><span class="pre">libc.so</span></code>.</p>
+</div>
+<p>Воспользуемся командой <code class="docutils literal notranslate"><span class="pre">file</span></code>, чтобы узнать подробности о файлах.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>skt@pc:~$ file /usr/bin/uptime
+/usr/bin/uptime: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=a456da05f956ee4931a67c49d80a949db6b96914, for GNU/Linux 3.2.0, stripped
+skt@pc:~$ file /usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, BuildID[sha1]=4cb55b1a3e1fcb63bde78cbab338d576fc43e330, stripped
+</pre></div>
+</div>
 <p>Использование разделяемых библиотек дает следующие преимущества:</p>
 <ul class="simple">
 <li><p>удобство в обновлении программ;</p></li>
 <li><p>экономное расходование дисковой и оперативной памяти.</p></li>
 </ul>
+<figure class="align-default">
+<img alt="../_images/exe-so-examples.png" src="../_images/exe-so-examples.png" />
+</figure>
 <p>При сборке программы файлы с исходными кодами (если быть точнее, то объектные файлы) группируются по трем сущностям:</p>
 <ul class="simple">
 <li><p>запускаемым файлам;</p></li>
@@ -640,6 +670,11 @@ gcc<span class="w"> </span>-L<span class="nv">$PWD</span><span class="w"> </span
 <section id="id6">
 <h2>Вопросы для самоконтроля<a class="headerlink" href="#id6" title="Link to this heading">#</a></h2>
 <ol class="arabic simple">
+<li><p>Чем отличаются “исполняемый файл”, “запускаемый файл” и “файл с разделяемой библиотекой”?</p></li>
+<li><p>Как отличить в файловой системе разделяемую библиотеку от запускаемого файла?</p></li>
+<li><p>Какие преимущества дают разделяемые библиотеки?
+Расскажите о них подробнее.</p></li>
+<li><p>Найдите на своей машине стандартную библиотеку Си.</p></li>
 <li><p>Что означают опции <code class="docutils literal notranslate"><span class="pre">-c</span></code>, <code class="docutils literal notranslate"><span class="pre">-o</span></code>, <code class="docutils literal notranslate"><span class="pre">-shared</span></code>, <code class="docutils literal notranslate"><span class="pre">-fPIC</span></code> управляющей программы <code class="docutils literal notranslate"><span class="pre">gcc</span></code>?</p></li>
 <li><p>Что означают переменные окружения <code class="docutils literal notranslate"><span class="pre">PWD</span></code>, <code class="docutils literal notranslate"><span class="pre">HOME</span></code>, <code class="docutils literal notranslate"><span class="pre">PATH</span></code>?</p></li>
 <li><p>Что выдаст <code class="docutils literal notranslate"><span class="pre">gcc</span></code>, если ей также передать файл с расширением <code class="docutils literal notranslate"><span class="pre">.h</span></code>?
@@ -649,7 +684,9 @@ gcc<span class="w"> </span>-L<span class="nv">$PWD</span><span class="w"> </span
 <section id="id7">
 <h2>Упражнения<a class="headerlink" href="#id7" title="Link to this heading">#</a></h2>
 <ol class="arabic simple">
-<li><p>Найдите в системе все разделяемые библиотеки командой <code class="docutils literal notranslate"><span class="pre">find</span></code>. <!-- `find / -name lib*.so 2>/dev/null | less` --></p></li>
+<li><p>Найдите в системе все разделяемые библиотеки командой <code class="docutils literal notranslate"><span class="pre">find</span></code>.</p></li>
+<li><p>Все ли разделяемые библиотеки в названии начинаются с префикса <code class="docutils literal notranslate"><span class="pre">lib</span></code>?</p></li>
+<li><p>Усовершенствуйте командую строку с <code class="docutils literal notranslate"><span class="pre">find</span></code>, чтобы она находила файлы с расширением <code class="docutils literal notranslate"><span class="pre">.so</span></code> и также файлы в расширении которых прописана версия как <code class="docutils literal notranslate"><span class="pre">.so.2.6.1</span></code>.</p></li>
 <li><p>Соберите программу из файлов <code class="docutils literal notranslate"><span class="pre">main.c</span></code>, <code class="docutils literal notranslate"><span class="pre">hello.c</span></code>, <code class="docutils literal notranslate"><span class="pre">print.c</span></code> в следующих вариантах:</p></li>
 </ol>
 <ul class="simple">
