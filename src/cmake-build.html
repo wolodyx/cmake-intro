@@ -442,15 +442,16 @@ document.write(`
 </section>
 <section id="id2">
 <h2>Сборка CMake<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<p>В системе уже может быть установлен пакет с CMake.
+Но мы соберем его из исходного кода.</p>
 <p>Склонируем проект из <a class="reference external" href="https://gitlab.kitware.com/cmake/cmake">GitLab</a> командой</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">gitlab</span><span class="o">.</span><span class="n">kitware</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">cmake</span><span class="o">/</span><span class="n">cmake</span><span class="o">.</span><span class="n">git</span>
 </pre></div>
 </div>
 <p>После чего в текущем каталоге появится каталог <code class="docutils literal notranslate"><span class="pre">CMake</span></code>.
-Перейдем туда.</p>
-<p>Проект CMake может быть установленной версией себя.
-Создадим каталог <code class="docutils literal notranslate"><span class="pre">build</span></code> в корне проекта командой <code class="docutils literal notranslate"><span class="pre">mkdir</span> <span class="pre">build</span></code>.</p>
-<p>Перейдите в созданный каталог и запустите <code class="docutils literal notranslate"><span class="pre">cmake</span> <span class="pre">..</span></code>.</p>
+Перейдем туда.
+Создадим каталог <code class="docutils literal notranslate"><span class="pre">build</span></code> в корне проекта командой <code class="docutils literal notranslate"><span class="pre">mkdir</span> <span class="pre">build</span></code>.
+Перейдите в созданный каталог и запустите <code class="docutils literal notranslate"><span class="pre">cmake</span> <span class="pre">..</span></code>.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">-- Performing Test HAVE_SOCKADDR_IN6_SIN6_SCOPE_ID</span>
 <span class="go">-- Performing Test HAVE_SOCKADDR_IN6_SIN6_SCOPE_ID - Success</span>
 <span class="go">-- Could NOT find OpenSSL, try to set the path to OpenSSL root folder in the system variable OPENSSL_ROOT_DIR (missing: OPENSSL_CRYPTO_LIBRARY OPENSSL_INCLUDE_DIR) </span>
@@ -630,7 +631,12 @@ CMake работает с двумя каталогами:</p>
 <section id="id8">
 <h2>Вопросы для самоконтроля<a class="headerlink" href="#id8" title="Link to this heading">#</a></h2>
 <ol class="arabic simple">
+<li><p>Что значат словосочетания “собрать программу”, “артефакты сборки”, “внешняя зависимость”?</p></li>
+<li><p>Какие исполняемые файлы входят в состав CMake?
+Запустите их.</p></li>
 <li><p>На что можно повлиять на этапе конфигурации проекта?</p></li>
+<li><p>Зачем нужен отдельный каталог <code class="docutils literal notranslate"><span class="pre">build</span></code> для сборки?</p></li>
+<li><p>Как отличить каталог с артефактами сборки от каталога с проектом?</p></li>
 </ol>
 </section>
 <section id="id9">
@@ -638,6 +644,10 @@ CMake работает с двумя каталогами:</p>
 <ol class="arabic simple">
 <li><p>При конфигурации Eigen в терминале просказльзывает сообщение, что UMFPACK не найден.
 Попробуйте собрать библиотеку с зависимостью <a class="reference external" href="https://en.wikipedia.org/wiki/UMFPACK">UMFPACK</a>.</p></li>
+<li><p>Проект CMake собирается долго.
+Попробуйте включить параллельную сборку, воспользовавшись флагом <code class="docutils literal notranslate"><span class="pre">-j</span></code>.
+Но сначала провертье, выделено ли достаточно процессорных ядер для вашей виртуальной машины.</p></li>
+<li><p>Попробуйте сконфигурировать проект через приложение <code class="docutils literal notranslate"><span class="pre">ccmake</span></code> или <code class="docutils literal notranslate"><span class="pre">cmake-gui</span></code>.</p></li>
 </ol>
 </section>
 </section>
